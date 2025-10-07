@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jam Digital RGB Full Screen</title>
+    <style>
+    /* Menggunakan font 'Share Tech Mono' - font digital */
+    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+    /* ======================================= */
+    /* GLOBAL STYLES & LAYOUT */
+    /* ======================================= */
+    body {
+        /* Menengahkan jam secara vertikal dan horizontal */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh; /* Memastikan penengahan vertikal */
+        margin: 0;
+        
+        background-color: #1a1a1a; 
+        font-family: 'Share Tech Mono', monospace; 
+        overflow: hidden; 
+        /* Pastikan body adalah elemen yang dapat di-fullscreen */
+        transition: all 0.5s ease;
+    }
+
+    #fullscreen-button {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        cursor: pointer;
+        border-radius: 5px;
+        font-family: sans-serif;
+        z-index: 10;
+        opacity: 0.05; /* Agar tidak terlalu mengganggu */
+        transition: opacity 0.3s;
+    }
+    #fullscreen-button:hover {
+        opacity: 1;
+    }
+
+    /* ======================================= */
+    /* FULLSCREEN MODE STYLES (Penyesuaian saat Full Screen) */
+    /* ======================================= */
+    /* Selector ini aktif saat elemen body dalam mode fullscreen */
+    body:-webkit-full-screen #digital-clock,
+    body:-moz-full-screen #digital-clock,
+    body:-ms-fullscreen #digital-clock,
+    body:fullscreen #digital-clock {
+        /* Menggunakan unit Viewport untuk mengisi layar sepenuhnya */
+        width: 90vw; 
+        padding: 5vh 2vw; 
+    }
+
+    body:-webkit-full-screen .time-component,
+    body:-moz-full-screen .time-component,
+    body:-ms-fullscreen .time-component,
+    body:fullscreen .time-component {
+        /* Ukuran font sangat besar agar memenuhi layar */
+        font-size: 25vw; 
+    }
+
+    body:-webkit-full-screen .separator,
+    body:-moz-full-screen .separator,
+    body:-ms-fullscreen .separator,
+    body:fullscreen .separator {
+        /* Ukuran pemisah juga sangat besar */
+        font-size: 25vw; 
+    }
+
+
+    /* ======================================= */
+    /* RGB ANIMATION (DIPERTAHANKAN) */
+    /* ======================================= */
+    @keyframes rgb-cycle {
+        0%   { border-color: #ff0000; color: #ff0000; box-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000, 0 0 40px rgba(255, 0, 0, 0.5); }
+        16%  { border-color: #ff7f00; color: #ff7f00; box-shadow: 0 0 10px #ff7f00, 0 0 20px #ff7f00, 0 0 40px rgba(255, 127, 0, 0.5); }
+        33%  { border-color: #ffff00; color: #ffff00; box-shadow: 0 0 10px #ffff00, 0 0 20px #ffff00, 0 0 40px rgba(255, 255, 0, 0.5); }
+        50%  { border-color: #00ff00; color: #00ff00; box-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00, 0 0 40px rgba(0, 255, 0, 0.5); }
+        66%  { border-color: #0000ff; color: #0000ff; box-shadow: 0 0 10px #0000ff, 0 0 20px #0000ff, 0 0 40px rgba(0, 0, 255, 0.5); }
+        83%  { border-color: #4b0082; color: #4b0082; box-shadow: 0 0 10px #4b0082, 0 0 20px #4b0082, 0 0 40px rgba(75, 0, 130, 0.5); }
+        100% { border-color: #ff00ff; color: #ff00ff; box-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff, 0 0 40px rgba(255, 0, 255, 0.5); }
+    }
+    /* ------------------------------------------------ */
+
+    #digital-clock {
+        /* Ukuran default untuk tampilan jendela (windowed) */
+        display: flex;
+        align-items: center;
+        justify-content: center; 
+        
+        width: 1200px; 
+        padding: 5px;
+        gap: 0px; 
+        
+        border: 2px solid; 
+        border-radius: 20px;
+
+        animation: rgb-cycle 10s infinite linear;
+        transition: all 0.5s ease;
+    }
+
+    .time-component {
+        
+        font-size: 300px; 
+        line-height: 1.5; 
+        text-align: center; 
+        font-weight: bolder;  
+        transition: font-size 0.5s ease;
+    }
+
+    /* Pemisah (:) */
+    .separator {
+        font-size: 200px; 
+        line-height: 1; 
+        animation: blink 1s step-end infinite;
+        transition: font-size 0.5s ease;
+    }
+
+    @keyframes blink {
+        from, to { color: transparent }
+        50% { color: inherit } 
+    }
+    </style>
+</head>
+<body>
+
+    <button id="fullscreen-button">Lihat Layar Penuh</button>
+
+    <div id="digital-clock">
+        <div id="hour" class="time-component">00</div>
+        <div class="separator">:</div>
+        <div id="minute" class="time-component">00</div>
+        <div class="separator">:</div>
+        <div id="second" class="time-component">00</div>
+    </div>
+
+    <script>
+        // Mendapatkan elemen yang akan ditampilkan Full Screen (seluruh body)
+        const fullscreenElement = document.body;
+        const fullscreenButton = document.getElementById('fullscreen-button');
+
+        // Fungsi untuk mengaktifkan Full Screen
+        function openFullscreen() {
+            if (fullscreenElement.requestFullscreen) {
+                fullscreenElement.requestFullscreen();
+            } else if (fullscreenElement.webkitRequestFullscreen) { /* Safari */
+                fullscreenElement.webkitRequestFullscreen();
+            } else if (fullscreenElement.msRequestFullscreen) { /* IE11 */
+                fullscreenElement.msRequestFullscreen();
+            }
+        }
+
+        // Fungsi untuk keluar dari Full Screen (opsional)
+        function closeFullscreen() {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) { /* Safari */
+                document.webkitExitFullscreen();
+            } else if (document.msExitFullscreen) { /* IE11 */
+                document.msExitFullscreen();
+            }
+        }
+
+        // Toggle Full Screen berdasarkan status saat ini
+        fullscreenButton.addEventListener('click', () => {
+            if (!document.fullscreenElement) {
+                openFullscreen();
+                fullscreenButton.textContent = 'Keluar Layar Penuh';
+            } else {
+                closeFullscreen();
+                fullscreenButton.textContent = 'Lihat Layar Penuh';
+            }
+        });
+
+        // =======================================
+        // FUNGSIONALITAS JAM (DIPERTAHANKAN)
+        // =======================================
+        function updateClock() {
+            const now = new Date();
+            let hours = now.getHours().toString().padStart(2, '0');
+            let minutes = now.getMinutes().toString().padStart(2, '0');
+            let seconds = now.getSeconds().toString().padStart(2, '0');
+
+            document.getElementById('hour').textContent = hours;
+            document.getElementById('minute').textContent = minutes;
+            document.getElementById('second').textContent = seconds;
+        }
+
+        updateClock();
+        setInterval(updateClock, 1000);
+    </script>
+
+</body>
+</html>
